@@ -1,126 +1,196 @@
 # EduReason AI
-### Explainable Hybrid AI for Student Success Prediction and Academic Decision Support
 
-[![Python](https://img.shields.io/badge/Python-3.13-blue)](https://www.python.org/)
-[![Machine Learning](https://img.shields.io/badge/Machine%20Learning-Scikit--learn-orange)](https://scikit-learn.org/)
-[![Explainable AI](https://img.shields.io/badge/Explainable%20AI-SHAP-purple)](https://shap.readthedocs.io/)
-[![Status](https://img.shields.io/badge/Status-In%20Development-yellow)]()
+Explainable student-outcome prediction with scikit-learn, SHAP, and transparent rule-based reasoning.
 
-## 1. Overview
+## Overview
 
-EduReason AI is an explainable hybrid artificial intelligence project designed to analyse student academic data and support early identification of students who may be at risk of dropping out.
+EduReason AI explores whether student information available at different points in an academic journey can help predict one of three recorded outcomes: **Dropout**, **Enrolled**, or **Graduate**. It includes two model experiments in the notebook and a Streamlit dashboard that serves the saved **first-semester Random Forest** model.
 
-The project combines machine learning-based prediction with symbolic, rule-based reasoning to produce predictions alongside interpretable explanations and potential academic support recommendations.
+This is an educational portfolio project, not a validated intervention or admissions system. Predictions should not be used to make consequential decisions about individual students.
 
-Rather than treating predictions as black-box outputs, EduReason AI aims to make the decision-making process more transparent and understandable.
+## Problem and prediction stages
 
-## 2. Problem Statement
+The project compares two prediction stages:
 
-Educational institutions collect substantial amounts of student information, but identifying students who may struggle academically at an early stage remains challenging.
+- **Admission-time model:** uses 24 demographic, application, prior-qualification, and economic-context inputs. It excludes semester-performance information.
+- **First-semester model:** uses those 24 inputs plus six first-semester academic-performance inputs, for 30 features total. This is the model used by the dashboard.
 
-Traditional predictive models can identify patterns associated with academic outcomes, but their predictions may be difficult for educators to interpret.
+Both stages predict the dataset's `Target` label. The first-semester model is intended to explore earlier academic support signals after first-semester results are available; it does not predict a student's future with certainty.
 
-EduReason AI explores how predictive machine learning and transparent reasoning rules can work together to support more understandable academic decision-making.
+## Dataset
 
-## 3. Project Objectives
+The project uses the [UCI Predict Students' Dropout and Academic Success dataset](https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success).
 
-- Predict student academic outcomes using machine learning.
-- Explore early identification of students at risk of dropping out.
-- Explain model predictions using Explainable AI techniques.
-- Develop rule-based reasoning to complement predictive outputs.
-- Investigate a hybrid approach combining statistical learning and symbolic reasoning.
+- **4,424 records**, **36 input columns**, and one target column (`Target`), for 37 columns total.
+- Target classes: `Dropout`, `Enrolled`, and `Graduate`.
+- Class counts recorded in the notebook: Graduate 2,209; Dropout 1,421; Enrolled 794.
+- The notebook's initial audit reports no missing values and no exact duplicate rows.
+- The CSV uses a semicolon (`;`) delimiter and is expected at `data/raw/data.csv`.
 
-## 4. Dataset
+The dashboard reads the raw CSV to populate valid form choices, numeric ranges, and the sample-student option. Keep this file available when running the app.
 
-This project uses the **Predict Students' Dropout and Academic Success** dataset from the UCI Machine Learning Repository.
+### Dataset attribution and license
 
-- Number of records: 4,424
-- Input features: 36
-- Target classes:
-  - Dropout
-  - Enrolled
-  - Graduate
+- **Dataset:** *Predict Students' Dropout and Academic Success*.
+- **Source:** [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success).
+- **Citation:** Realinho, V., Vieira Martins, M., Machado, J., & Baptista, L. (2021). *Predict Students' Dropout and Academic Success* [Dataset]. UCI Machine Learning Repository. DOI: [10.24432/C5MC89](https://doi.org/10.24432/C5MC89).
+- **Dataset license:** [Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/). Redistribution and adaptation require appropriate attribution.
 
-Dataset source: [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success)
+The repository's [MIT License](LICENSE) applies to project code. It does not replace or change the dataset's separate CC BY 4.0 license.
 
-## 5. Proposed Architecture
-
-The project follows a modular pipeline:
-
-1. **Data Processing:** Data loading, inspection, cleaning and preprocessing.
-2. **Feature Engineering:** Selection and transformation of relevant student attributes.
-3. **Machine Learning:** Training and evaluating predictive classification models.
-4. **Explainability:** Using SHAP to investigate feature contributions to model predictions.
-5. **Symbolic Reasoning:** Applying interpretable rules to derive additional insights.
-6. **Hybrid Decision Support:** Combining model predictions and reasoning outputs.
-7. **Dashboard:** Presenting predictions and explanations through an interactive interface.
-
-## 6. Technology Stack
-
-| Area | Technologies |
-|---|---|
-| Programming | Python |
-| Data Processing | Pandas, NumPy |
-| Machine Learning | Scikit-learn |
-| Visualisation | Matplotlib, Seaborn |
-| Explainable AI | SHAP |
-| Interface | Streamlit |
-| Version Control | Git, GitHub |
-
-## 7. Current Progress
-
-- [x] Repository and project structure created.
-- [x] Dataset downloaded from the UCI repository.
-- [x] Initial exploratory data analysis completed.
-- [x] Target distribution and missing-value checks completed.
-- [x] Age-based and academic-performance patterns explored.
-- [ ] Data preprocessing and feature engineering.
-- [ ] Baseline machine learning models.
-- [ ] Model evaluation and comparison.
-- [ ] SHAP-based model explanations.
-- [ ] Symbolic reasoning implementation.
-- [ ] Hybrid decision-support pipeline.
-- [ ] Interactive dashboard.
-
-## 8. Research Direction
-
-An important aspect of this project is evaluating predictions using only information available at the intended prediction time.
-
-For example, an early-warning model designed to operate at the end of the first semester should not use second-semester information. This helps avoid data leakage and makes the experimental setup more realistic.
-
-The project will also investigate how explainability and symbolic reasoning can complement conventional predictive models.
-
-## 9. Repository Structure
+## Repository structure
 
 ```text
 EduReason-AI/
+├── app.py                               # Streamlit first-semester prediction app
 ├── data/
-│   ├── raw/
-│   └── processed/
-├── notebooks/
-│   └── 01_initial_data_exploration.ipynb
-├── src/
-│   ├── data/
-│   ├── evaluation/
-│   ├── explainability/
-│   ├── features/
-│   ├── models/
-│   └── reasoning/
-├── tests/
+│   └── raw/
+│       └── data.csv                     # UCI dataset (semicolon-delimited)
 ├── models/
-├── reports/
-├── docs/
-├── README.md
+│   ├── first_semester_model.joblib       # Trained preprocessing + Random Forest pipeline
+│   └── model_metadata.joblib             # Feature names, classes, and feature groups
+├── notebooks/
+│   ├── 01_initial_data_exploration.ipynb          # Original exploratory analysis
+│   └── 02_model_development_and_explainability.ipynb # Self-contained modeling, SHAP, rules, export
+├── src/
+│   └── data_loader.py                   # Dataset loading helper
+├── tests/
+│   └── test_app.py                      # Streamlit AppTest coverage
+├── requirements.txt                     # Pinned project dependencies
+├── .gitignore
 ├── LICENSE
-└── .gitignore
+└── README.md
 ```
 
-## 10. Project Status
+**Model artifact note:** the dashboard requires both files under `models/`. They are generated by the final training/export cells in `02_model_development_and_explainability.ipynb`. They are present in the current working copy but are not tracked in the current Git repository state. If they are absent in a fresh checkout, run notebook 02 through its model export cell to create them before launching the dashboard. Notebook 02 is self-contained and does not depend on notebook 01. The app also requires `data/raw/data.csv` at the path above.
 
-**Currently under active development.**
+## Installation (Windows)
 
-This project is an exploration of explainable and hybrid AI methods for educational decision support. Model performance, experimental findings and dashboard capabilities will be documented as development progresses.
+Open a terminal in the repository folder. In PowerShell, create and activate a virtual environment, then install the pinned dependencies:
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+If PowerShell blocks environment activation, use the environment's executable directly instead of changing the machine's execution policy:
+
+```powershell
+.\.venv\Scripts\python.exe -m pip install --upgrade pip
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+```
+
+The listed versions match the working Python 3.13 environment used for this project. The requirements include Streamlit/model inference libraries, notebook execution support, and packages imported by the analysis notebook.
+
+### Generate the saved model files when needed
+
+Use `notebooks/01_initial_data_exploration.ipynb` for the original exploratory analysis. Use `notebooks/02_model_development_and_explainability.ipynb` for the self-contained feature-selection, preprocessing, cross-validation, model comparison, SHAP, symbolic-reasoning, and model-export workflow. Open either notebook in VS Code or Jupyter and select the `.venv` Python kernel.
+
+To generate missing model artifacts, run notebook 02 through its final export cell. It performs cross-validation and model fitting, so it can take longer than launching the dashboard. Its final export cell overwrites existing files under `models/` if executed.
+
+## Launch the Streamlit dashboard
+
+From the repository root with the environment active:
+
+```powershell
+python -m streamlit run app.py
+```
+
+Open the URL printed by Streamlit, normally <http://localhost:8501>.
+
+The dashboard loads `models/first_semester_model.joblib`, `models/model_metadata.joblib`, and `data/raw/data.csv`. It reports the predicted class and class probabilities.
+
+### Enter student information
+
+The form supplies all 30 first-semester model features, grouped into demographics, admission information, family background, financial information, and first-semester academic performance.
+
+There are two ways to populate it:
+
+1. **Manual entry:** choose valid dataset-backed categories and binary options, and enter numerical values within the observed dataset ranges. Initial values are dataset-derived (categorical modes and numerical medians); every field can be edited.
+2. **Load Sample Student:** loads one reproducible actual row from the local CSV. The `Target` value is excluded from model input and is not displayed. All loaded fields remain editable.
+
+The app validates that every required model feature is present before prediction; it does not silently fill omitted features with zero.
+
+## Training and model comparison
+
+The notebook builds preprocessing and classifier steps inside scikit-learn pipelines. Numerical columns are standardized, categorical columns are one-hot encoded with unknown categories ignored, and binary columns pass through. The dataset is split once into an 80% training partition and a 20% test partition with stratification and `random_state=42`. Model comparisons use five-fold stratified cross-validation on the training partition.
+
+Class imbalance is addressed in selected candidates by assigning additional weight to the `Enrolled` class. The candidate comparisons below are the notebook's recorded cross-validation results; they are not held-out test scores.
+
+### Admission-time candidates (5-fold CV)
+
+| Model | Accuracy | Macro F1 | Weighted F1 |
+|---|---:|---:|---:|
+| Logistic Regression (balanced) | 0.6019 | 0.5665 | 0.6153 |
+| Random Forest (balanced) | 0.6380 | 0.5638 | 0.6283 |
+| Random Forest (Enrolled weight 2.0) | 0.6485 | 0.5561 | 0.6281 |
+| Extra Trees (balanced) | 0.6448 | 0.5356 | 0.6156 |
+| XGBoost | 0.6635 | 0.5600 | 0.6360 |
+| XGBoost (Enrolled sample weight 2.5) | 0.6360 | **0.5926** | **0.6432** |
+
+The notebook uses the weighted XGBoost candidate for its admission-time final test report. It has the highest macro F1 in this comparison, while the unweighted XGBoost candidate has the highest accuracy.
+
+### First-semester candidates (5-fold CV)
+
+| Model | Accuracy | Macro F1 | Weighted F1 |
+|---|---:|---:|---:|
+| Logistic Regression (balanced) | 0.7222 | 0.6801 | 0.7308 |
+| Random Forest (balanced) | 0.7437 | 0.6823 | 0.7389 |
+| XGBoost | **0.7604** | 0.6821 | **0.7471** |
+| Random Forest (Enrolled weight 2.0) | 0.7519 | **0.6845** | 0.7424 |
+
+The notebook selects the weighted Random Forest for the final first-semester evaluation and saves it for the dashboard. XGBoost has higher cross-validation accuracy; the weighted Random Forest has slightly higher macro F1. The choice is therefore not based on accuracy alone.
+
+## Held-out test evaluation
+
+The notebook reports accuracy, macro F1, and per-class precision, recall, F1, and support for the selected candidate at each prediction stage. The held-out partition contains 885 records: 284 Dropout, 159 Enrolled, and 442 Graduate.
+
+| Prediction stage / selected model | Accuracy | Macro F1 |
+|---|---:|---:|
+| Admission-time / weighted XGBoost | 0.6463 | 0.5250 |
+| First-semester / weighted Random Forest | 0.7254 | 0.6488 |
+
+Per-class test-set results are shown as **precision / recall / F1**:
+
+| Stage / model | Dropout (n=284) | Enrolled (n=159) | Graduate (n=442) |
+|---|---:|---:|---:|
+| Admission-time / weighted XGBoost | 0.66 / 0.63 / 0.64 | 0.33 / 0.13 / 0.18 | 0.68 / 0.85 / 0.75 |
+| First-semester / weighted Random Forest | 0.77 / 0.65 / 0.71 | 0.45 / 0.37 / 0.41 | 0.78 / 0.90 / 0.83 |
+
+The Enrolled class has substantially lower recall than the other classes, especially at admission time. Weighting improves its identification in the first-semester model, but its recall remains limited. ROC-AUC and PR-AUC are not reported by the notebook and are not claimed here.
+
+## Explainability and rule-based reasoning
+
+- **Local SHAP:** the dashboard uses SHAP `TreeExplainer` on the saved Random Forest. It reports up to 10 original student features with signed contributions for the predicted class; positive and negative contributions are labeled as supporting or opposing that outcome. The app maps encoded columns back to their source features.
+- **Global importance:** a dashboard chart aggregates the Random Forest's built-in impurity-based feature importances. This is a model statistic, not global SHAP.
+- **Symbolic reasoning:** transparent fixed rules flag very few approved units, a low first-semester grade, a low approved-to-enrolled ratio, assessments with no units approved, outstanding debt, and tuition not up to date. These rules are shown alongside model output; they are not trained and do not generate intervention recommendations.
+- **Graceful SHAP handling:** if SHAP cannot run, the app displays a warning while retaining the model prediction, probabilities, and rule-based reasoning.
+
+## Tests
+
+The automated tests use Streamlit's built-in AppTest and Python's `unittest`. From the repository root with project dependencies installed, run:
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+The current tests verify that all 30 controls render, a real sample record loads without its target, a separate manually populated record can be submitted, and both paths produce predictions and the expected explanation/probability outputs.
+
+## Limitations and next steps
+
+- **Enrolled-class performance is weak:** test recall is 0.13 for the admission-time candidate and 0.37 for the first-semester candidate. The dataset is imbalanced, and class weighting does not remove that limitation.
+- **Test-set independence is limited:** the notebook reports test-set metrics for earlier Logistic Regression and Random Forest baselines before reporting the selected final candidates on the same split. Although final candidates are compared with cross-validation, repeated inspection of the test split can introduce selection bias. Treat the reported test scores as exploratory rather than as a pristine final estimate.
+- **One dataset and one split:** there is no independent institution, time-based validation, or external cohort evaluation. Generalization to other schools, periods, or student populations is unknown.
+- **No fairness, calibration, or operational validation:** the notebook does not report subgroup fairness analysis, probability calibration, or a deployed intervention study.
+- **Input codes:** category choices are populated with actual dataset codes; the dashboard does not provide a full human-readable codebook for every course, qualification, nationality, and occupation code.
+- **Decision-support only:** the predictions and rules are not evidence of causation and should not replace educator judgment or be used as the sole basis for student decisions.
+
+### Future improvement opportunities
+
+Potential next steps include evaluating on a newly reserved untouched cohort, adding time- or institution-based validation, improving and calibrating Enrolled-class predictions, documenting code labels, and assessing fairness and educational impact with appropriate stakeholders. These are not currently implemented.
 
 ---
 
-*Developed as an independent AI and Machine Learning project.*
+*Independent machine-learning portfolio project. Dataset: UCI Machine Learning Repository.*
